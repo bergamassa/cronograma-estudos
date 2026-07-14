@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --page-bg:#BFEADA;
     --window-bg:#FAF5EC;
     --ink:#26251F;
     --ink-soft:#8C876F;
@@ -30,45 +29,48 @@
     --shadow:0 8px 24px rgba(38,37,31,0.07);
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;overflow:hidden;}
   body{
     font-family:'Inter',sans-serif;
-    background:var(--page-bg);
+    background:var(--window-bg);
     color:var(--ink);
-    min-height:100vh;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    padding:28px 16px;
+    height:100vh;
+    width:100vw;
   }
   .window{
     width:100%;
-    max-width:1240px;
+    height:100vh;
     background:var(--window-bg);
-    border-radius:32px;
-    box-shadow:0 30px 60px rgba(20,50,40,0.18);
     display:grid;
     grid-template-columns:78px 1fr 300px;
     overflow:hidden;
-    min-height:760px;
   }
   @media (max-width:980px){
     .window{grid-template-columns:70px 1fr;}
     .rightpanel{display:none;}
   }
   @media (max-width:640px){
-    .window{grid-template-columns:1fr; border-radius:20px;}
+    .window{
+      grid-template-columns:1fr; 
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
     .sidebar{
       flex-direction:row; justify-content:space-around;
-      padding:10px 6px; order:2;
+      padding:10px 6px; order:2; height: auto; border-right: none; border-top: 1px solid var(--line);
     }
-    main{order:1; padding:20px 18px;}
+    main{
+      order:1; padding:20px 18px; flex: 1; height: auto; overflow-y: auto;
+    }
   }
 
   /* ---------- SIDEBAR ---------- */
   .sidebar{
     display:flex; flex-direction:column; align-items:center;
     padding:26px 0; gap:8px;
+    height: 100vh;
+    border-right: 1px solid var(--line);
   }
   .sb-logo{
     width:40px; height:40px; border-radius:12px;
@@ -88,7 +90,11 @@
   .sb-btn:hover:not(.active){background:#EFE8D6;}
 
   /* ---------- MAIN ---------- */
-  main{ padding:30px 30px 30px 22px; }
+  main{ 
+    padding:30px 30px 30px 22px; 
+    height: 100vh;
+    overflow-y: auto;
+  }
   .view{display:none;}
   .view.active{display:block; animation:fade .3s ease;}
   @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
@@ -229,7 +235,13 @@
   .section-title{font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin:24px 0 12px;}
 
   /* ---------- RIGHT PANEL ---------- */
-  .rightpanel{ background:var(--window-bg); padding:26px 22px; border-left:1px solid var(--line); }
+  .rightpanel{ 
+    background:var(--window-bg); 
+    padding:26px 22px; 
+    border-left:1px solid var(--line); 
+    height: 100vh;
+    overflow-y: auto;
+  }
   .rp-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
   .rp-icon{width:34px; height:34px; border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); cursor:pointer; color:var(--ink-soft); border:none;}
   .rp-icon svg{width:15px; height:15px;}
@@ -269,6 +281,20 @@
 </style>
 </head>
 <body>
+
+<div id="login-screen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--window-bg); display:flex; align-items:center; justify-content:center; z-index:9999; padding: 16px;">
+  <div style="background:#fff; padding:40px 30px; border-radius:24px; box-shadow:0 12px 40px rgba(38,37,31,0.08); width:100%; max-width:400px; text-align:center;">
+    <div class="sb-logo" style="margin: 0 auto 16px; width: 48px; height: 48px; font-size: 20px; border-radius: 14px;">M</div>
+    <h2 style="font-family:'Fraunces',serif; font-size:24px; margin: 0 0 6px; color:var(--ink);">Área de Estudos</h2>
+    <p style="color:var(--ink-soft); font-size:13.5px; margin: 0 0 24px; font-weight: 500;">Planejamento ENEM + FUVEST</p>
+    <div style="text-align: left; margin-bottom: 16px;">
+      <label style="margin-bottom: 8px;">Senha de Acesso</label>
+      <input type="password" id="login-pass" placeholder="Insira a senha" style="background: #FBF8F1; border: 1.5px solid var(--line); padding: 12px; border-radius: 11px;">
+    </div>
+    <button class="btn" id="login-btn" style="width:100%; padding:12px; border-radius: 11px;">Entrar no Painel</button>
+    <p id="login-err" style="color:var(--coral-ic); font-size:12.0px; margin-top:14px; display:none; font-weight:700;">Senha incorreta. Tente novamente.</p>
+  </div>
+</div>
 
 <div class="window">
 
@@ -414,6 +440,34 @@
 </div>
 
 <script>
+/* ============ CONFIGURAÇÃO DE LOGIN ============ */
+const LOGIN_PASSWORD = "foco2026"; // Altere aqui se quiser mudar sua senha!
+
+const loginScreen = document.getElementById("login-screen");
+const loginPass = document.getElementById("login-pass");
+const loginBtn = document.getElementById("login-btn");
+const loginErr = document.getElementById("login-err");
+
+if (sessionStorage.getItem("authenticated") === "true") {
+  loginScreen.style.display = "none";
+}
+
+function checkLogin() {
+  if (loginPass.value === LOGIN_PASSWORD) {
+    sessionStorage.setItem("authenticated", "true");
+    loginScreen.style.display = "none";
+  } else {
+    loginErr.style.display = "block";
+    loginPass.value = "";
+    loginPass.focus();
+  }
+}
+
+loginBtn.addEventListener("click", checkLogin);
+loginPass.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") checkLogin();
+});
+
 /* ============ DATA ============ */
 const EXAMS = [
   {name:"FUVEST — 1ª Fase", date:"2026-11-01", note:"80 questões", tone:"coral"},
@@ -561,12 +615,12 @@ function fmtDateFull(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleD
 function daysLeft(iso){ const t=new Date(); t.setHours(0,0,0,0); return Math.round((new Date(iso+"T00:00:00")-t)/86400000); }
 
 async function getDoneWeeks(){
-  try{ const r = localStorage.getItem("weeks-done"); return r? JSON.parse(r):[]; }catch(e){ return []; }
+  try{ const r = await window.storage.get("weeks-done", false); return r? JSON.parse(r.value):[]; }catch(e){ return []; }
 }
 async function toggleWeek(id){
   let done = await getDoneWeeks();
   if(done.includes(id)) done = done.filter(x=>x!==id); else done.push(id);
-  try{ localStorage.setItem("weeks-done", JSON.stringify(done)); }catch(e){}
+  try{ await window.storage.set("weeks-done", JSON.stringify(done), false); }catch(e){}
   renderCronograma(); renderPainel();
 }
 
@@ -776,8 +830,8 @@ function refreshPrioUI(){
 }
 
 /* ============ CADERNO DE ERROS ============ */
-async function getErros(){ try{ const r=localStorage.getItem("erros"); return r?JSON.parse(r):[]; }catch(e){return [];} }
-async function saveErros(a){ try{ localStorage.setItem("erros",JSON.stringify(a));}catch(e){} }
+async function getErros(){ try{ const r=await window.storage.get("erros",false); return r?JSON.parse(r.value):[]; }catch(e){return [];} }
+async function saveErros(a){ try{ await window.storage.set("erros",JSON.stringify(a),false);}catch(e){} }
 async function renderErros(){
   const arr = await getErros();
   document.getElementById("err-count").textContent = arr.length;
@@ -813,8 +867,8 @@ document.getElementById("err-add").addEventListener("click", async ()=>{
 });
 
 /* ============ REVISAO ============ */
-async function getRevisoes(){ try{ const r=localStorage.getItem("revisoes"); return r?JSON.parse(r):[]; }catch(e){return [];} }
-async function saveRevisoes(a){ try{ localStorage.setItem("revisoes",JSON.stringify(a));}catch(e){} }
+async function getRevisoes(){ try{ const r=await window.storage.get("revisoes",false); return r?JSON.parse(r.value):[]; }catch(e){return [];} }
+async function saveRevisoes(a){ try{ await window.storage.set("revisoes",JSON.stringify(a),false);}catch(e){} }
 function addDays(iso,n){ const d=new Date(iso+"T00:00:00"); d.setDate(d.getDate()+n); return d.toLocaleDateString("pt-BR"); }
 async function renderRevisoes(){
   const arr = await getRevisoes();
@@ -857,9 +911,9 @@ document.getElementById("rev-add").addEventListener("click", async ()=>{
 document.getElementById("reset-btn").addEventListener("click", async ()=>{
   if(!confirm("Isso vai apagar todos os dados salvos (semanas marcadas, erros e revisões). Continuar?")) return;
   try{
-    localStorage.setItem("weeks-done", "[]");
-    localStorage.setItem("erros", "[]");
-    localStorage.setItem("revisoes", "[]");
+    await window.storage.set("weeks-done", "[]", false);
+    await window.storage.set("erros", "[]", false);
+    await window.storage.set("revisoes", "[]", false);
   }catch(e){}
   renderPainel(); renderCronograma(); renderErros(); renderRevisoes();
 });
