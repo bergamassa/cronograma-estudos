@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reta Final — ENEM + FUVEST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --page-bg:#BFEADA;
+    --window-bg:#FAF5EC;
+    --ink:#26251F;
+    --ink-soft:#8C876F;
+    --line:#EAE2D0;
+    --card-bg:#FFFFFF;
+    --sidebar-icon:#3B392F;
+    --sidebar-active:#1E1D18;
+
+    --coral:#F2A99A; --coral-ic:#EC8272; --coral-tint:#FBE7E1;
+    --peach:#F3D39C; --peach-ic:#E8B565; --peach-tint:#FCF1DD;
+    --lav:#C9C0EA; --lav-ic:#A392DD; --lav-tint:#EFEBFB;
+    --mint:#A9DEC0; --mint-ic:#5FB98B; --mint-tint:#E5F6EC;
+    --sand:#D8CEB4; --sand-ic:#B4A377; --sand-tint:#F3EEE0;
+    --sky:#A9CBE0; --sky-ic:#5D97BE; --sky-tint:#E6F0F7;
+
+    --radius-lg:28px;
+    --radius-md:20px;
+    --radius-sm:14px;
+    --shadow:0 8px 24px rgba(38,37,31,0.07);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--page-bg);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:28px 16px;
+  }
+  .window{
+    width:100%;
+    max-width:1240px;
+    background:var(--window-bg);
+    border-radius:32px;
+    box-shadow:0 30px 60px rgba(20,50,40,0.18);
+    display:grid;
+    grid-template-columns:78px 1fr 300px;
+    overflow:hidden;
+    min-height:760px;
+  }
+  @media (max-width:980px){
+    .window{grid-template-columns:70px 1fr;}
+    .rightpanel{display:none;}
+  }
+  @media (max-width:640px){
+    .window{grid-template-columns:1fr; border-radius:20px;}
+    .sidebar{
+      flex-direction:row; justify-content:space-around;
+      padding:10px 6px; order:2;
+    }
+    main{order:1; padding:20px 18px;}
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    display:flex; flex-direction:column; align-items:center;
+    padding:26px 0; gap:8px;
+  }
+  .sb-logo{
+    width:40px; height:40px; border-radius:12px;
+    background:var(--sidebar-active); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; font-size:17px;
+    margin-bottom:22px;
+  }
+  .sb-btn{
+    width:46px; height:46px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; border:none; cursor:pointer;
+    color:var(--sidebar-icon);
+  }
+  .sb-btn svg{width:19px; height:19px;}
+  .sb-btn.active{background:var(--sidebar-active); color:#fff;}
+  .sb-btn:hover:not(.active){background:#EFE8D6;}
+
+  /* ---------- MAIN ---------- */
+  main{ padding:30px 30px 30px 22px; }
+  .view{display:none;}
+  .view.active{display:block; animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .top-title{ font-family:'Fraunces',serif; font-weight:600; font-size:32px; line-height:1.15; margin:2px 0 4px; letter-spacing:-0.3px;}
+  .top-sub{color:var(--ink-soft); font-size:14px; margin:0 0 20px;}
+
+  .pill-row{display:flex; gap:8px; margin-bottom:26px; flex-wrap:wrap;}
+  .pill-btn{
+    padding:9px 18px; border-radius:999px; border:1.5px solid var(--line);
+    background:#fff; font-weight:600; font-size:12.5px; color:var(--ink-soft);
+    cursor:pointer; white-space:nowrap;
+  }
+  .pill-btn.active{background:var(--sidebar-active); border-color:var(--sidebar-active); color:#fff;}
+
+  /* colorful card, shared style */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr;}}
+  .xcard{
+    border-radius:var(--radius-md);
+    padding:18px 18px 16px;
+    position:relative;
+    box-shadow:var(--shadow);
+    min-height:120px;
+  }
+  .xcard .icon-sq{
+    width:38px; height:38px; border-radius:11px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px; color:#fff;
+  }
+  .xcard .icon-sq svg{width:18px; height:18px;}
+  .xcard .tag{
+    position:absolute; top:16px; right:16px;
+    background:rgba(0,0,0,0.14); color:#fff;
+    font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:999px;
+  }
+  .xcard .title{ font-weight:700; font-size:15px; margin-bottom:6px; line-height:1.3; padding-right:70px;}
+  .xcard .meta{ font-size:11.5px; color:rgba(38,37,31,0.62); line-height:1.5;}
+  .xcard .check{
+    position:absolute; bottom:14px; right:16px;
+    width:26px; height:26px; border-radius:9px;
+    background:rgba(255,255,255,0.55); border:2px solid rgba(0,0,0,0.15);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-size:14px; font-weight:800;
+  }
+  .xcard .check.checked{ background:var(--sidebar-active); border-color:var(--sidebar-active); color:#fff;}
+  .xcard.done{opacity:0.55;}
+
+  .tone-coral{background:var(--coral);} .tone-coral .icon-sq{background:var(--coral-ic);}
+  .tone-peach{background:var(--peach);} .tone-peach .icon-sq{background:var(--peach-ic);}
+  .tone-lav{background:var(--lav);} .tone-lav .icon-sq{background:var(--lav-ic);}
+  .tone-mint{background:var(--mint);} .tone-mint .icon-sq{background:var(--mint-ic);}
+  .tone-sand{background:var(--sand);} .tone-sand .icon-sq{background:var(--sand-ic);}
+  .tone-sky{background:var(--sky);} .tone-sky .icon-sq{background:var(--sky-ic);}
+
+  /* phase accordion */
+  .phase{margin-bottom:16px;}
+  .phase-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-radius:16px; background:#fff; box-shadow:var(--shadow);
+    cursor:pointer;
+  }
+  .phase-head .ph-left{display:flex; align-items:center; gap:12px;}
+  .phase-head .ph-name{font-family:'Fraunces',serif; font-weight:600; font-size:16px;}
+  .phase-head .ph-prog{font-size:11.5px; color:var(--ink-soft); font-weight:600;}
+  .phase-head .ph-chevron{font-size:13px; color:var(--ink-soft); transition:transform .2s;}
+  .phase-head.open .ph-chevron{transform:rotate(180deg);}
+  .phase-head.locked{opacity:0.6;}
+  .phase-body{ padding:16px 2px 4px; display:none;}
+  .phase-body.open{display:block;}
+  .lock-tag{font-size:10px; background:var(--sand-tint); color:var(--sand-ic); padding:3px 9px; border-radius:999px; font-weight:700; margin-left:8px;}
+  .done-tag{font-size:10px; background:var(--mint-tint); color:var(--mint-ic); padding:3px 9px; border-radius:999px; font-weight:700; margin-left:8px;}
+  .exam-banner{
+    background:var(--coral-tint); border:1.5px dashed var(--coral-ic);
+    border-radius:14px; padding:12px 16px; margin:10px 0;
+    font-weight:700; color:var(--coral-ic); font-size:12.5px;
+  }
+
+  /* ciclo transposed grid */
+  .toggle-row{display:flex; gap:10px; margin-bottom:20px;}
+  .ciclo-grid{
+    display:grid;
+    grid-template-columns:90px repeat(5,1fr);
+    gap:8px;
+  }
+  @media (max-width:760px){
+    .ciclo-grid{grid-template-columns:70px repeat(5,minmax(110px,1fr)); overflow-x:auto;}
+  }
+  .ciclo-cell{
+    border-radius:13px; padding:11px 10px; font-size:11px; font-weight:600; line-height:1.35;
+    display:flex; align-items:center;
+  }
+  .ciclo-daylabel{
+    font-family:'Fraunces',serif; font-weight:600; font-size:13px;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    color:var(--ink-soft);
+  }
+  .ciclo-blocklabel{
+    font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.4px;
+    color:var(--ink-soft); display:flex; align-items:center;
+  }
+
+  /* prio table */
+  .filter-row{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .plevel{padding:7px 16px; border-radius:999px; border:1.5px solid var(--line); background:#fff; font-weight:700; font-size:12px; cursor:pointer; color:var(--ink-soft);}
+  .plevel.on-S{background:var(--coral); border-color:var(--coral); color:#fff;}
+  .plevel.on-A{background:var(--peach); border-color:var(--peach); color:#26251F;}
+  .plevel.on-B{background:var(--mint); border-color:var(--mint); color:#26251F;}
+  .plevel.on-all{background:var(--sidebar-active); border-color:var(--sidebar-active); color:#fff;}
+  .prio-row{
+    display:grid; grid-template-columns:120px 1fr 90px; gap:10px; align-items:center;
+    background:#fff; border-radius:14px; padding:12px 16px; margin-bottom:8px; box-shadow:var(--shadow);
+  }
+  @media (max-width:640px){.prio-row{grid-template-columns:1fr; text-align:left;}}
+  .prio-row .pm{font-weight:700; font-size:12.5px;}
+  .prio-row .pt{font-size:12.5px;}
+  .prio-row .pt small{color:var(--ink-soft); display:block; margin-top:2px; font-size:10.5px;}
+  .lvl-badge{padding:5px 12px; border-radius:999px; font-weight:800; font-size:10.5px; text-align:center;}
+
+  /* forms */
+  .form-card{background:#fff; border-radius:var(--radius-md); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:22px;}
+  .form-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:12px;}
+  label{font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:var(--ink-soft); display:block; margin-bottom:6px;}
+  input, select, textarea{
+    width:100%; padding:10px 12px; border-radius:11px; border:1.5px solid var(--line);
+    font-family:'Inter',sans-serif; font-size:13px; background:#FBF8F1; color:var(--ink);
+  }
+  input:focus, select:focus, textarea:focus{outline:2px solid var(--sidebar-active); outline-offset:1px;}
+  .btn{padding:10px 20px; border-radius:11px; border:none; background:var(--sidebar-active); color:#fff; font-weight:700; font-size:12.5px; cursor:pointer;}
+  .entry-list{display:flex; flex-direction:column; gap:9px;}
+  .entry{background:#fff; border-radius:15px; padding:13px 16px; box-shadow:var(--shadow); display:grid; grid-template-columns:1fr auto; gap:8px;}
+  .entry .top{font-weight:700; font-size:13px; margin-bottom:2px;}
+  .entry .meta2{font-size:10.5px; color:var(--ink-soft); margin-bottom:5px;}
+  .entry .note{font-size:12px; line-height:1.5;}
+  .entry .del{background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:15px;}
+  .badge2{padding:3px 10px; border-radius:999px; font-size:10px; font-weight:700; margin-right:5px; display:inline-block; margin-top:3px;}
+  .empty{color:var(--ink-soft); font-size:13px; font-style:italic; padding:12px 0;}
+  .section-title{font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin:24px 0 12px;}
+
+  /* ---------- RIGHT PANEL ---------- */
+  .rightpanel{ background:var(--window-bg); padding:26px 22px; border-left:1px solid var(--line); }
+  .rp-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
+  .rp-icon{width:34px; height:34px; border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); cursor:pointer; color:var(--ink-soft); border:none;}
+  .rp-icon svg{width:15px; height:15px;}
+  .rp-profile{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:20px;}
+  .rp-avatar{
+    width:64px; height:64px; border-radius:50%;
+    background:linear-gradient(135deg,var(--coral),var(--lav));
+    display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:10px;
+    box-shadow:0 0 0 4px #fff, 0 0 0 6px var(--lav);
+  }
+  .rp-avatar svg{width:28px; height:28px;}
+  .rp-name{font-family:'Fraunces',serif; font-weight:600; font-size:16px;}
+  .rp-role{font-size:11.5px; color:var(--ink-soft); margin-bottom:8px;}
+  .rp-bar-track{width:100%; height:6px; background:var(--line); border-radius:999px; overflow:hidden;}
+  .rp-bar-fill{height:100%; background:linear-gradient(90deg,var(--mint-ic),var(--sky-ic)); border-radius:999px;}
+  .rp-bar-label{font-size:10.5px; color:var(--ink-soft); margin-top:6px;}
+
+  .rp-card{background:#fff; border-radius:18px; padding:16px 16px; box-shadow:var(--shadow); margin-bottom:16px;}
+  .rp-card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .rp-card-head .h{font-size:12px; font-weight:700; color:var(--ink-soft);}
+  .rp-card-head .sel{font-size:10.5px; color:var(--ink-soft); background:var(--line); padding:3px 9px; border-radius:999px;}
+  .rp-stat{font-family:'Fraunces',serif; font-weight:700; font-size:22px; margin-bottom:2px;}
+  .rp-stat-note{font-size:11px; color:var(--mint-ic); font-weight:700; margin-bottom:12px;}
+  .bars{display:flex; align-items:flex-end; gap:6px; height:64px;}
+  .bar{flex:1; border-radius:5px 5px 2px 2px; background:var(--line); position:relative;}
+  .bar.hi{background:var(--sidebar-active);}
+  .bar-labels{display:flex; gap:6px; margin-top:6px;}
+  .bar-labels span{flex:1; text-align:center; font-size:8.5px; color:var(--ink-soft);}
+
+  .rp-exam{ display:flex; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line);}
+  .rp-exam:last-child{border-bottom:none;}
+  .rp-exam .thumb{width:36px; height:36px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff;}
+  .rp-exam .thumb svg{width:16px;height:16px;}
+  .rp-exam .txt .t1{font-size:12px; font-weight:700;}
+  .rp-exam .txt .t2{font-size:10px; color:var(--ink-soft);}
+  .rp-exam .days{margin-left:auto; font-weight:800; font-size:14px; font-family:'Fraunces',serif;}
+</style>
+</head>
+<body>
+
+<div class="window">
+
+  <nav class="sidebar">
+    <div class="sb-logo">M</div>
+    <button class="sb-btn active" data-view="painel" title="Painel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+    </button>
+    <button class="sb-btn" data-view="cronograma" title="Cronograma">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+    </button>
+    <button class="sb-btn" data-view="ciclo" title="Ciclo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    </button>
+    <button class="sb-btn" data-view="prioridades" title="Prioridades">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20l-7-7 2.5-2.5L11 15l7.5-7.5L21 10z"/></svg>
+    </button>
+    <button class="sb-btn" data-view="erros" title="Erros">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+    </button>
+    <button class="sb-btn" data-view="revisao" title="Revisão">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 21v-6h6"/></svg>
+    </button>
+  </nav>
+
+  <main>
+    <section class="view active" id="view-painel">
+      <div class="top-title">Reta final,</div>
+      <p class="top-sub">seu plano para ENEM + FUVEST com foco em Medicina.</p>
+      <div class="grid2" id="painel-cards"></div>
+
+      <div class="section-title">Legenda</div>
+      <div class="form-card" style="padding:16px 18px;">
+        <div class="pill-row" id="legend-phase" style="margin-bottom:8px;"></div>
+        <div class="pill-row" id="legend-subj" style="margin-bottom:0;"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-cronograma">
+      <div class="top-title">Cronograma</div>
+      <p class="top-sub">13/07 até 07/12 · marque a semana ao concluir — a próxima fase se abre sozinha.</p>
+      <div id="phase-list"></div>
+    </section>
+
+    <section class="view" id="view-ciclo">
+      <div class="top-title">Ciclo de estudos</div>
+      <p class="top-sub">Sua semana-modelo, para repetir enquanto durar cada fase.</p>
+      <div class="toggle-row">
+        <button class="pill-btn active" data-ciclo="ferias">☀️ Férias (4h/dia)</button>
+        <button class="pill-btn" data-ciclo="rotina">📘 Rotina normal (2h/dia)</button>
+      </div>
+      <div id="ciclo-content"></div>
+    </section>
+
+    <section class="view" id="view-prioridades">
+      <div class="top-title">Prioridades</div>
+      <p class="top-sub">Ranking cruzado ENEM + FUVEST.</p>
+      <div class="filter-row" id="prio-filters"></div>
+      <div id="prio-list"></div>
+    </section>
+
+    <section class="view" id="view-erros">
+      <div class="top-title">Caderno de erros</div>
+      <p class="top-sub">Registre logo após corrigir simulados ou listas.</p>
+      <div class="form-card">
+        <div class="form-grid">
+          <div><label>Matéria</label>
+            <select id="err-materia">
+              <option>Matemática</option><option>Biologia</option><option>Física</option>
+              <option>Química</option><option>Português</option><option>Literatura</option>
+              <option>Redação</option><option>História</option><option>Geografia</option>
+              <option>Filosofia</option><option>Sociologia</option><option>Inglês</option>
+            </select>
+          </div>
+          <div><label>Tipo de erro</label>
+            <select id="err-tipo">
+              <option>Não sabia o conteúdo</option><option>Interpretei errado</option>
+              <option>Erro de conta</option><option>Confundi conceito</option>
+              <option>Falta de atenção</option><option>Não deu tempo</option>
+            </select>
+          </div>
+          <div><label>Assunto específico</label><input id="err-assunto" placeholder="Ex: relações ecológicas"></div>
+        </div>
+        <div class="form-grid" style="grid-template-columns:1fr;">
+          <div><label>O que fazer diferente</label><textarea id="err-acao" rows="2" placeholder="Ex: revisar mutualismo vs comensalismo"></textarea></div>
+        </div>
+        <button class="btn" id="err-add">+ Registrar erro</button>
+      </div>
+      <div class="section-title">Erros registrados (<span id="err-count">0</span>)</div>
+      <div class="entry-list" id="err-list"></div>
+    </section>
+
+    <section class="view" id="view-revisao">
+      <div class="top-title">Revisão espaçada</div>
+      <p class="top-sub">Toda sexta: resolva 10-15 questões do tema — não releia teoria.</p>
+      <div class="form-card">
+        <div class="form-grid">
+          <div><label>Matéria</label>
+            <select id="rev-materia">
+              <option>Matemática</option><option>Biologia</option><option>Física</option>
+              <option>Química</option><option>Português</option><option>Literatura</option>
+              <option>Redação</option><option>História</option><option>Geografia</option>
+              <option>Filosofia</option><option>Sociologia</option><option>Inglês</option>
+            </select>
+          </div>
+          <div><label>Assunto</label><input id="rev-assunto" placeholder="Ex: Matemática Básica"></div>
+          <div><label>Data de estudo</label><input id="rev-data" type="date"></div>
+        </div>
+        <button class="btn" id="rev-add">+ Adicionar ao ciclo</button>
+      </div>
+      <div class="section-title">Assuntos no radar (<span id="rev-count">0</span>)</div>
+      <div class="entry-list" id="rev-list"></div>
+    </section>
+  </main>
+
+  <aside class="rightpanel">
+    <div class="rp-top">
+      <button class="rp-icon" title="Notificações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+      <button class="rp-icon" id="reset-btn" title="Limpar dados salvos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+    <div class="rp-profile">
+      <div class="rp-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg></div>
+      <div class="rp-name">Reta Final 2026</div>
+      <div class="rp-role">Meta: Medicina</div>
+      <div class="rp-bar-track"><div class="rp-bar-fill" id="rp-bar" style="width:0%"></div></div>
+      <div class="rp-bar-label" id="rp-bar-label">0 de 21 semanas concluídas</div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-card-head"><span class="h">Progresso mensal</span><span class="sel">2026</span></div>
+      <div class="rp-stat" id="rp-hours">0%</div>
+      <div class="rp-stat-note">🎯 semanas concluídas</div>
+      <div class="bars" id="rp-bars"></div>
+      <div class="bar-labels" id="rp-bar-labels"></div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-card-head"><span class="h">Próximas provas</span></div>
+      <div id="rp-exams"></div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+/* ============ DATA ============ */
+const EXAMS = [
+  {name:"FUVEST — 1ª Fase", date:"2026-11-01", note:"80 questões", tone:"coral"},
+  {name:"ENEM — 1º Dia", date:"2026-11-08", note:"Linguagens/Humanas/Redação", tone:"lav"},
+  {name:"ENEM — 2º Dia", date:"2026-11-15", note:"Natureza/Matemática", tone:"sky"},
+  {name:"FUVEST — 2ª Fase (Dia 1)", date:"2026-12-06", note:"—", tone:"peach"},
+  {name:"FUVEST — 2ª Fase (Dia 2)", date:"2026-12-07", note:"—", tone:"mint"},
+];
+
+const PHASE_META = {
+  "Férias": {tone:"coral", label:"Férias"},
+  "Transição": {tone:"sky", label:"Transição"},
+  "Rotina normal": {tone:"mint", label:"Rotina"},
+  "Bloco livre": {tone:"sand", label:"Bloco livre"},
+  "Reta final": {tone:"peach", label:"Reta final"},
+};
+
+const WEEKS = [
+  ["S1","2026-07-13","2026-07-17","Férias","4h","Fase 1: Matemática Básica + Ecologia — teoria + primeiras questões"],
+  ["S2","2026-07-20","2026-07-24","Férias","4h","Fase 1: Eletrodinâmica + Físico-Química"],
+  ["S3","2026-07-27","2026-07-28","Transição","4h","Fase 1: Modernismo/Interpretação de texto + estrutura da Redação (últimos dias de férias)"],
+  ["S3b","2026-07-29","2026-07-31","Transição","2h","Fase 1: revisão geral da Fase 1 (já em rotina normal)"],
+  ["S4","2026-08-03","2026-08-07","Rotina normal","2h","Fase 2: Sistema Imunológico/Fisiologia Humana + Genética/Evolução"],
+  ["S5","2026-08-10","2026-08-14","Rotina normal","2h","Fase 2: Microbiologia + Termologia/Ondulatória"],
+  ["S6","2026-08-17","2026-08-21","Rotina normal","2h","Fase 2: Cinemática + Estatística/Geom. Espacial/Funções"],
+  ["S7","2026-08-24","2026-08-28","Rotina normal","2h","Fase 2: Química Geral/Orgânica + Crase/Orações/Figuras de linguagem"],
+  ["S8","2026-08-31","2026-09-04","Rotina normal","2h","Fase 2→3: Climatologia/Geopolítica + Era Vargas/Ditadura/Guerras"],
+  ["S9","2026-09-07","2026-09-11","Rotina normal","2h","Fase 3: Zoologia/Botânica/Bioenergética"],
+  ["S10","2026-09-14","2026-09-18","Bloco livre","leve","Só revisão leve — sem conteúdo novo. Priorize o colégio."],
+  ["S11","2026-09-21","2026-09-29","Bloco livre","leve","Só revisão leve — sem conteúdo novo. Priorize o colégio."],
+  ["S12","2026-09-30","2026-10-02","Rotina normal","2h","Retomada — Fase 3: Óptica/Dinâmica/Hidrostática"],
+  ["S13","2026-10-05","2026-10-09","Rotina normal","2h","Fase 3: Geometria Plana/Probabilidade/Combinatória/Trigonometria"],
+  ["S14","2026-10-12","2026-10-16","Rotina normal","2h","Fase 3: Filosofia (Aristóteles/Platão/Contratualistas/Kant) + Sociologia"],
+  ["S15","2026-10-19","2026-10-23","Reta final","2h+","Simulados gerais ENEM+FUVEST cronometrados + revisão de todo Nível S"],
+  ["S16","2026-10-26","2026-10-30","Reta final","2h+","Revisão geral + simulados — preparação final para a FUVEST 1ª fase"],
+  ["S17","2026-11-02","2026-11-06","Reta final","2h+","Pós-FUVEST: revisão ENEM Dia 1 (Linguagens/Humanas/Redação)"],
+  ["S18","2026-11-09","2026-11-13","Reta final","2h+","Revisão intensiva ENEM Dia 2 (Natureza + Matemática)"],
+  ["S19","2026-11-16","2026-11-20","Bloco livre","leve","Descanso pós-ENEM — revisão leve. Priorize o colégio."],
+  ["S20","2026-11-23","2026-11-27","Bloco livre","leve","Só revisão leve. Priorize o colégio."],
+  ["S21","2026-11-30","2026-12-04","Reta final","2h+","Sprint FUVEST 2ª fase: Redação filosófica + obras literárias obrigatórias"],
+];
+
+const PHASE_GROUPS = [
+  {name:"Fase 1 — Fundamentos", ids:["S1","S2","S3","S3b"]},
+  {name:"Fase 2 — Nível S restante", ids:["S4","S5","S6","S7","S8","S9"]},
+  {name:"Fase 3 — Nível A/B + bimestre", ids:["S10","S11","S12","S13","S14"]},
+  {name:"Reta Final — Provas", ids:["S15","S16","S17","S18","S19","S20","S21"]},
+];
+
+const EXAM_BANNERS = {
+  "2026-11-01":"🔴 FUVEST — 1ª FASE · domingo · 80 questões",
+  "2026-11-08":"🔴 ENEM — 1º DIA · domingo · Linguagens, Humanas, Redação",
+  "2026-11-15":"🔴 ENEM — 2º DIA · domingo · Natureza, Matemática",
+};
+
+const SUBJ = {
+  mat:{tone:"lav",label:"Matemática"}, bio:{tone:"mint",label:"Biologia"},
+  fis:{tone:"sky",label:"Física"}, qui:{tone:"peach",label:"Química"},
+  lin:{tone:"coral",label:"Português/Redação"}, hum:{tone:"sand",label:"Humanas"},
+  rev:{tone:"sand",label:"Revisão/Questões"},
+};
+
+const CICLOS = {
+  ferias:{
+    blocks:4,
+    days:[
+      ["Segunda",[["mat","Matemática — teoria (Ferretto)"],["bio","Ecologia/Fisiologia"],["fis","Eletrodinâmica/Termologia"],["rev","Questões (mix)"]]],
+      ["Terça",[["qui","Físico-Química"],["lin","Português/Literatura"],["mat","Matemática — exercícios"],["rev","Questões (mix)"]]],
+      ["Quarta",[["bio","Genética/Microbiologia"],["fis","Ondulatória/Cinemática"],["lin","Redação"],["rev","Questões (mix)"]]],
+      ["Quinta",[["qui","Química — exercícios"],["hum","Geografia/História"],["mat","Estatística/Geometria"],["rev","Questões (mix)"]]],
+      ["Sexta",[["rev","Revisão espaçada"],["rev","Simulado parcial"],["rev","Correção + Erros"],["lin","Redação/Humanas"]]],
+    ]
+  },
+  rotina:{
+    blocks:2,
+    days:[
+      ["Segunda",[["mat","Teoria: tema Nível S/A"],["rev","Questões"]]],
+      ["Terça",[["lin","Teoria: Linguagens/Humanas"],["rev","Questões"]]],
+      ["Quarta",[["fis","Continuação Exatas/Natureza"],["rev","Questões"]]],
+      ["Quinta",[["hum","Continuação Ling./Humanas"],["rev","Questões"]]],
+      ["Sexta",[["rev","Revisão espaçada"],["rev","Mini-simulado"]]],
+    ]
+  }
+};
+
+const PRIORIDADES = [
+  ["Matemática","Matemática Básica","37,3%","—","S"],
+  ["Biologia","Ecologia","26,0%","Matéria mais importante da prova","S"],
+  ["Física","Eletrodinâmica","21,1%","⭐⭐⭐","S"],
+  ["Física","Termologia (Calorimetria)","16,0%","⭐⭐⭐","S"],
+  ["Química","Físico-Química (Estequiometria/Soluções/Eletroquímica)","presente","área que mais cai","S"],
+  ["Física","Ondulatória/Acústica","13,7%","⭐⭐⭐","S"],
+  ["Biologia","Sist. Imunológico/Fisiologia Humana","7,7%","⭐⭐⭐","S"],
+  ["Biologia","Genética/Evolução/Biotecnologia","6,5%","⭐⭐⭐","S"],
+  ["Física","Cinemática (Movimento Circular)","11,4%","⭐⭐⭐","S"],
+  ["Biologia","Microbiologia (bactérias/vírus/protozoários)","6,5%","⭐⭐⭐","S"],
+  ["Linguagens","Modernismo + Interpretação de texto","disparado","⭐⭐⭐ importantíssimo","S"],
+  ["Redação","Estrutura dissertativa-argumentativa","decisivo p/ nota","prova filosófica/reflexiva","S"],
+  ["Biologia","Zoologia (Artrópodes/Cordados)","8,3%","⭐⭐","A"],
+  ["Biologia","Botânica (Angiospermas)","7,1%","⭐⭐⭐","A"],
+  ["Biologia","Bioenergética (Fotossíntese/Respiração)","7,1%","⭐⭐⭐","A"],
+  ["Física","Óptica (Refração)","9,1%","⭐⭐⭐","A"],
+  ["Física","Dinâmica (Leis de Newton/Trabalho-Energia)","6,3%/4,6%","⭐⭐⭐","A"],
+  ["Física","Hidrostática","—","⭐⭐⭐","A"],
+  ["Matemática","Estatística","11,2%","—","A"],
+  ["Matemática","Geometria Espacial","11,2%","—","A"],
+  ["Matemática","Funções","10,2%","—","A"],
+  ["Química","Química Geral (ligações/forças intermol.)","presente","—","A"],
+  ["Química","Química Orgânica","presente","—","A"],
+  ["Português","Crase/Orações/Figuras de linguagem","presente","⭐⭐⭐","A"],
+  ["Geografia","Climatologia/Dinâmica dos Climas","presente","⭐⭐⭐","A"],
+  ["Geografia","Geopolítica/Globalização","presente","⭐⭐⭐","A"],
+  ["História","Era Vargas/Ditadura Militar","presente","—","A"],
+  ["História","Guerras Mundiais + Guerra Fria","presente","—","A"],
+  ["Matemática","Geometria Plana","7,7%","—","B"],
+  ["Matemática","Probabilidade","5,2%","—","B"],
+  ["Matemática","Análise Combinatória","4,1%","—","B"],
+  ["Matemática","Trigonometria","3,7%","—","B"],
+  ["Física","Magnetismo/Estática/Eletrostática","5,1%/2,9%/3,4%","⭐⭐","B"],
+  ["Física","Física Moderna","—","⭐","B"],
+  ["Química","Química Ambiental","presente","—","B"],
+  ["Filosofia","Aristóteles/Platão/Contratualistas/Kant","presente","⭐⭐⭐","B"],
+  ["Sociologia","Durkheim/Marx/Weber/Indústria Cultural","presente","⭐⭐⭐","B"],
+  ["Biologia","Citogenética/Histologia/Embriologia","3,6%/5,3%/—","⭐⭐","B"],
+];
+
+const ICONS = {
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V4M4 4h14l-3 4 3 4H4"/></svg>',
+};
+
+/* ============ NAV ============ */
+document.querySelectorAll(".sb-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".sb-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("view-"+btn.dataset.view).classList.add("active");
+  });
+});
+
+/* ============ HELPERS ============ */
+function fmtDate(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}); }
+function fmtDateFull(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"}); }
+function daysLeft(iso){ const t=new Date(); t.setHours(0,0,0,0); return Math.round((new Date(iso+"T00:00:00")-t)/86400000); }
+
+async function getDoneWeeks(){
+  try{ const r = localStorage.getItem("weeks-done"); return r? JSON.parse(r):[]; }catch(e){ return []; }
+}
+async function toggleWeek(id){
+  let done = await getDoneWeeks();
+  if(done.includes(id)) done = done.filter(x=>x!==id); else done.push(id);
+  try{ localStorage.setItem("weeks-done", JSON.stringify(done)); }catch(e){}
+  renderCronograma(); renderPainel();
+}
+
+/* ============ PAINEL ============ */
+async function renderPainel(){
+  const done = await getDoneWeeks();
+  const upcoming = EXAMS.map(e=>({...e,left:daysLeft(e.date)})).filter(e=>e.left>=0).sort((a,b)=>a.left-b.left);
+  const cards = document.getElementById("painel-cards");
+  cards.innerHTML = "";
+  EXAMS.forEach(e=>{
+    const d = daysLeft(e.date);
+    const div = document.createElement("div");
+    div.className = "xcard tone-"+e.tone;
+    div.innerHTML = `
+      <div class="icon-sq">${ICONS.flag}</div>
+      <span class="tag">${d>=0? d+" dias": "concluída"}</span>
+      <div class="title">${e.name}</div>
+      <div class="meta">${fmtDateFull(e.date)}${e.note!=="—"? " · "+e.note:""}</div>
+    `;
+    cards.appendChild(div);
+  });
+
+  const legendPhase = document.getElementById("legend-phase");
+  legendPhase.innerHTML = "";
+  Object.values(PHASE_META).forEach(p=>{
+    legendPhase.innerHTML += `<span class="pill-btn" style="cursor:default;"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--${p.tone}-ic);margin-right:6px;"></span>${p.label}</span>`;
+  });
+  const legendSubj = document.getElementById("legend-subj");
+  legendSubj.innerHTML = "";
+  Object.values(SUBJ).forEach(s=>{
+    legendSubj.innerHTML += `<span class="pill-btn" style="cursor:default;"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--${s.tone}-ic);margin-right:6px;"></span>${s.label}</span>`;
+  });
+
+  // right panel
+  document.getElementById("rp-bar").style.width = Math.round(done.length/WEEKS.length*100)+"%";
+  document.getElementById("rp-bar-label").textContent = `${done.length} de ${WEEKS.length} semanas concluídas`;
+  document.getElementById("rp-hours").textContent = Math.round(done.length/WEEKS.length*100)+"%";
+
+  // monthly bar chart (weeks done per month)
+  const months = ["Jul","Ago","Set","Out","Nov","Dez"];
+  const monthCounts = [0,0,0,0,0,0];
+  const monthTotals = [0,0,0,0,0,0];
+  WEEKS.forEach(([id,start])=>{
+    const m = new Date(start+"T00:00:00").getMonth() - 6; // Jul=6
+    if(m>=0 && m<6){ monthTotals[m]++; if(done.includes(id)) monthCounts[m]++; }
+  });
+  const maxV = Math.max(1,...monthTotals);
+  const barsEl = document.getElementById("rp-bars");
+  const labelsEl = document.getElementById("rp-bar-labels");
+  barsEl.innerHTML=""; labelsEl.innerHTML="";
+  months.forEach((m,i)=>{
+    const h = Math.max(6, (monthCounts[i]/maxV)*64);
+    const isHi = monthCounts[i]>0 && monthCounts[i]===Math.max(...monthCounts);
+    barsEl.innerHTML += `<div class="bar ${isHi?'hi':''}" style="height:${h}px;"></div>`;
+    labelsEl.innerHTML += `<span>${m}</span>`;
+  });
+
+  const rpExams = document.getElementById("rp-exams");
+  rpExams.innerHTML = "";
+  if(upcoming.length===0){ rpExams.innerHTML = '<div class="empty">Todas as provas concluídas!</div>'; }
+  upcoming.slice(0,4).forEach(e=>{
+    rpExams.innerHTML += `
+      <div class="rp-exam">
+        <div class="thumb tone-${e.tone}" style="background:var(--${e.tone}-ic)">${ICONS.cal}</div>
+        <div class="txt"><div class="t1">${e.name}</div><div class="t2">${fmtDate(e.date)}</div></div>
+        <div class="days">${e.left}</div>
+      </div>`;
+  });
+}
+
+/* ============ CRONOGRAMA (phases) ============ */
+let openPhase = null;
+async function renderCronograma(){
+  const done = await getDoneWeeks();
+  const wrap = document.getElementById("phase-list");
+  wrap.innerHTML = "";
+
+  // determine which phase is "current" (first with incomplete weeks)
+  let currentIdx = PHASE_GROUPS.findIndex(p => p.ids.some(id => !done.includes(id)));
+  if(currentIdx === -1) currentIdx = PHASE_GROUPS.length-1;
+  if(openPhase===null) openPhase = currentIdx;
+
+  PHASE_GROUPS.forEach((phase, idx)=>{
+    const total = phase.ids.length;
+    const doneCount = phase.ids.filter(id=>done.includes(id)).length;
+    const allDone = doneCount===total;
+    const isLocked = idx > currentIdx;
+    const isOpen = openPhase===idx;
+
+    const section = document.createElement("div");
+    section.className = "phase";
+    const head = document.createElement("div");
+    head.className = "phase-head" + (isOpen?" open":"") + (isLocked?" locked":"");
+    head.innerHTML = `
+      <div class="ph-left">
+        <span class="ph-name">${phase.name}</span>
+        ${allDone? '<span class="done-tag">✓ Completo</span>' : (isLocked? '<span class="lock-tag">🔒 prévia</span>':'')}
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="ph-prog">${doneCount}/${total} semanas</span>
+        <span class="ph-chevron">▾</span>
+      </div>
+    `;
+    head.addEventListener("click", ()=>{ openPhase = isOpen? null: idx; renderCronograma(); });
+    section.appendChild(head);
+
+    const body = document.createElement("div");
+    body.className = "phase-body" + (isOpen?" open":"");
+    const grid = document.createElement("div");
+    grid.className = "grid2";
+    phase.ids.forEach(id=>{
+      const w = WEEKS.find(x=>x[0]===id);
+      const [wid,start,end,ph,hrs,foco] = w;
+      const meta = PHASE_META[ph];
+      const isDone = done.includes(wid);
+      const card = document.createElement("div");
+      card.className = `xcard tone-${meta.tone}` + (isDone?" done":"");
+      card.innerHTML = `
+        <div class="icon-sq">${ICONS.cal}</div>
+        <span class="tag">${hrs}</span>
+        <div class="title">${wid} · ${fmtDate(start)}–${fmtDate(end)}</div>
+        <div class="meta">${foco}</div>
+        <div class="check ${isDone?'checked':''}">${isDone?'✓':''}</div>
+      `;
+      card.querySelector(".check").addEventListener("click",(e)=>{ e.stopPropagation(); toggleWeek(wid); });
+      grid.appendChild(card);
+      if(EXAM_BANNERS[end]){
+        const b = document.createElement("div");
+        b.className = "exam-banner";
+        b.style.gridColumn = "1 / -1";
+        b.textContent = EXAM_BANNERS[end];
+        grid.appendChild(b);
+      }
+    });
+    body.appendChild(grid);
+    if(phase===PHASE_GROUPS[PHASE_GROUPS.length-1]){
+      const b = document.createElement("div");
+      b.className = "exam-banner";
+      b.textContent = "🔴 FUVEST — 2ª FASE · 06 e 07 de dezembro";
+      body.appendChild(b);
+    }
+    section.appendChild(body);
+    wrap.appendChild(section);
+  });
+}
+
+/* ============ CICLO ============ */
+function renderCiclo(which){
+  const c = CICLOS[which];
+  const content = document.getElementById("ciclo-content");
+  const grid = document.createElement("div");
+  grid.className = "ciclo-grid";
+  grid.innerHTML += `<div></div>`;
+  c.days.forEach(([day])=>{ grid.innerHTML += `<div class="ciclo-daylabel">${day}</div>`; });
+  for(let b=0;b<c.blocks;b++){
+    grid.innerHTML += `<div class="ciclo-blocklabel">Bloco ${b+1}</div>`;
+    c.days.forEach(([day,blocks])=>{
+      const [k,txt] = blocks[b];
+      const s = SUBJ[k];
+      grid.innerHTML += `<div class="ciclo-cell" style="background:var(--${s.tone}-tint); color:var(--${s.tone}-ic);">${txt}</div>`;
+    });
+  }
+  content.innerHTML = "";
+  content.appendChild(grid);
+}
+document.querySelectorAll("[data-ciclo]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-ciclo]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    renderCiclo(btn.dataset.ciclo);
+  });
+});
+
+/* ============ PRIORIDADES ============ */
+let prioFilter = "all";
+function renderPrioridades(){
+  const filters = document.getElementById("prio-filters");
+  filters.innerHTML = `
+    <button class="plevel on-all" data-f="all">Todos</button>
+    <button class="plevel" data-f="S">Nível S</button>
+    <button class="plevel" data-f="A">Nível A</button>
+    <button class="plevel" data-f="B">Nível B</button>
+  `;
+  filters.querySelectorAll(".plevel").forEach(p=>{
+    p.addEventListener("click",()=>{ prioFilter=p.dataset.f; refreshPrioUI(); });
+  });
+  refreshPrioUI();
+}
+function refreshPrioUI(){
+  document.querySelectorAll("#prio-filters .plevel").forEach(p=>{
+    p.className = "plevel" + (p.dataset.f===prioFilter ? " on-"+p.dataset.f : "");
+  });
+  const LVLTONE = {S:"coral",A:"peach",B:"mint"};
+  const list = document.getElementById("prio-list");
+  list.innerHTML = "";
+  PRIORIDADES.filter(r=>prioFilter==="all"||r[4]===prioFilter).forEach(([materia,tema,enem,fuvest,nivel])=>{
+    const tone = LVLTONE[nivel];
+    const row = document.createElement("div");
+    row.className = "prio-row";
+    row.innerHTML = `
+      <div class="pm">${materia}</div>
+      <div class="pt">${tema}<small>ENEM: ${enem} · FUVEST: ${fuvest}</small></div>
+      <div class="lvl-badge" style="background:var(--${tone}-tint); color:var(--${tone}-ic);">Nível ${nivel}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+/* ============ CADERNO DE ERROS ============ */
+async function getErros(){ try{ const r=localStorage.getItem("erros"); return r?JSON.parse(r):[]; }catch(e){return [];} }
+async function saveErros(a){ try{ localStorage.setItem("erros",JSON.stringify(a));}catch(e){} }
+async function renderErros(){
+  const arr = await getErros();
+  document.getElementById("err-count").textContent = arr.length;
+  const list = document.getElementById("err-list");
+  list.innerHTML="";
+  if(arr.length===0){ list.innerHTML='<div class="empty">Nenhum erro registrado ainda.</div>'; return; }
+  arr.slice().reverse().forEach((e,ri)=>{
+    const idx = arr.length-1-ri;
+    const div = document.createElement("div");
+    div.className="entry";
+    div.innerHTML = `
+      <div>
+        <div class="top">${e.materia} — ${e.assunto||"(sem assunto)"}</div>
+        <div class="meta2">${e.tipo} · ${e.data}</div>
+        <div class="note">${e.acao||""}</div>
+      </div>
+      <button class="del" data-idx="${idx}">✕</button>`;
+    div.querySelector(".del").addEventListener("click", async ()=>{
+      const cur = await getErros(); cur.splice(idx,1); await saveErros(cur); renderErros();
+    });
+    list.appendChild(div);
+  });
+}
+document.getElementById("err-add").addEventListener("click", async ()=>{
+  const materia=document.getElementById("err-materia").value;
+  const tipo=document.getElementById("err-tipo").value;
+  const assunto=document.getElementById("err-assunto").value.trim();
+  const acao=document.getElementById("err-acao").value.trim();
+  const data=new Date().toLocaleDateString("pt-BR");
+  const arr=await getErros(); arr.push({materia,tipo,assunto,acao,data}); await saveErros(arr);
+  document.getElementById("err-assunto").value=""; document.getElementById("err-acao").value="";
+  renderErros();
+});
+
+/* ============ REVISAO ============ */
+async function getRevisoes(){ try{ const r=localStorage.getItem("revisoes"); return r?JSON.parse(r):[]; }catch(e){return [];} }
+async function saveRevisoes(a){ try{ localStorage.setItem("revisoes",JSON.stringify(a));}catch(e){} }
+function addDays(iso,n){ const d=new Date(iso+"T00:00:00"); d.setDate(d.getDate()+n); return d.toLocaleDateString("pt-BR"); }
+async function renderRevisoes(){
+  const arr = await getRevisoes();
+  document.getElementById("rev-count").textContent = arr.length;
+  const list = document.getElementById("rev-list");
+  list.innerHTML="";
+  if(arr.length===0){ list.innerHTML='<div class="empty">Nenhum assunto no radar ainda.</div>'; return; }
+  arr.slice().reverse().forEach((e,ri)=>{
+    const idx = arr.length-1-ri;
+    const div = document.createElement("div");
+    div.className="entry";
+    div.innerHTML = `
+      <div>
+        <div class="top">${e.assunto} <span style="font-weight:500;color:var(--ink-soft);">(${e.materia})</span></div>
+        <div class="meta2">estudado em ${new Date(e.data+"T00:00:00").toLocaleDateString("pt-BR")}</div>
+        <div>
+          <span class="badge2" style="background:var(--sand-tint);color:var(--sand-ic);">1ª: ${addDays(e.data,5)}</span>
+          <span class="badge2" style="background:var(--peach-tint);color:var(--peach-ic);">2ª: ${addDays(e.data,14)}</span>
+          <span class="badge2" style="background:var(--mint-tint);color:var(--mint-ic);">3ª: ${addDays(e.data,30)}</span>
+        </div>
+      </div>
+      <button class="del" data-idx="${idx}">✕</button>`;
+    div.querySelector(".del").addEventListener("click", async ()=>{
+      const cur = await getRevisoes(); cur.splice(idx,1); await saveRevisoes(cur); renderRevisoes();
+    });
+    list.appendChild(div);
+  });
+}
+document.getElementById("rev-add").addEventListener("click", async ()=>{
+  const materia=document.getElementById("rev-materia").value;
+  const assunto=document.getElementById("rev-assunto").value.trim();
+  const data=document.getElementById("rev-data").value || new Date().toISOString().slice(0,10);
+  if(!assunto){ document.getElementById("rev-assunto").focus(); return; }
+  const arr=await getRevisoes(); arr.push({materia,assunto,data}); await saveRevisoes(arr);
+  document.getElementById("rev-assunto").value="";
+  renderRevisoes();
+});
+
+/* ============ RESET ============ */
+document.getElementById("reset-btn").addEventListener("click", async ()=>{
+  if(!confirm("Isso vai apagar todos os dados salvos (semanas marcadas, erros e revisões). Continuar?")) return;
+  try{
+    localStorage.setItem("weeks-done", "[]");
+    localStorage.setItem("erros", "[]");
+    localStorage.setItem("revisoes", "[]");
+  }catch(e){}
+  renderPainel(); renderCronograma(); renderErros(); renderRevisoes();
+});
+
+/* ============ INIT ============ */
+renderPainel();
+renderCronograma();
+renderCiclo("ferias");
+renderPrioridades();
+renderErros();
+renderRevisoes();
+document.getElementById("rev-data").valueAsDate = new Date();
+</script>
+</body>
+</html>
